@@ -1,19 +1,23 @@
 package controllers
 
 import (
-	"database/sql"
 	"gopkg.in/kataras/iris.v6"
 	"fmt"
 	"github.com/cms-go/services"
+	"github.com/jinzhu/gorm"
 )
 
 type AdminUserController struct {
-	db *sql.DB
+	db *gorm.DB
 }
 
-func NewAdminUserController(db *sql.DB) (*AdminUserController)  {
-	return &AdminUserController {
-		db: db,
+func NewAdminUserController(db ...*gorm.DB) (*AdminUserController)  {
+	if len(db) > 0 {
+		return &AdminUserController{
+			db: db[0],
+		}
+	} else {
+		return &AdminUserController{}
 	}
 }
 

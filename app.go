@@ -4,13 +4,13 @@ import (
 	"gopkg.in/kataras/iris.v6"
 	"gopkg.in/kataras/iris.v6/adaptors/httprouter"
 	"gopkg.in/kataras/iris.v6/adaptors/view"
-	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/cms-go/controllers"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"github.com/cms-go/routers"
 )
 
 func main() {
-	db, err := sql.Open("mysql", "cmsadmin:cmsadmin@/cmsadmin?parseTime=true")
+	db, err := gorm.Open("mysql", "cmsadmin:cmsadmin@tcp(127.0.0.1:3306)/cmsadmin?charset=utf8&parseTime=True&loc=Local")
 
 	if err != nil {
 		db = nil
@@ -24,7 +24,7 @@ func main() {
 	app.Adapt(httprouter.New())
 	app.Adapt(view.HTML("./templates", ".html"))
 
-	app.Get("/login", controllers.NewAdminUserController(db).Login())
+	routers.Router(app, db)
 
 	app.Listen(":8080")
 }
